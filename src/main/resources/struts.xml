@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+    <constant name="struts.devMode" value="false" />
+   <package name="default" namespace="/" extends="struts-default">
+		<!--注册拦截器，实现用户登录才能访问 -->
+		<interceptors>
+			<interceptor name="loginauth" class="com.wwh.ssh.interceptor.LoginInterceptor"></interceptor>
+			<!--自定义拦截器栈myStack，组合了defaultStack和loginauth -->
+			<interceptor-stack name="myStack">
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="loginauth"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<global-results>
+			<result name="login">/users/login.jsp</result>
+		</global-results>
+	</package>
+	<!--登陆与注册-->
+	<package name="users" namespace="/users" extends="default">
+		<action name="*_*" class="{1}Action" method="{2}">
+			<result name="login_success">/users/login_success.jsp</result>
+			<result name="login_failure">/users/login.jsp</result>
+			<result name="logout_success">/users/login.jsp</result>
+			<result name="input">/users/login.jsp</result><!-- 进行输入验证出错跳转页面 -->
+			<result name="reg_success">/users/reg_success.jsp</result>
+			<result name="reg_failure">/users/reg_failure.jsp</result>
+			<interceptor-ref name="myStack"></interceptor-ref>
+		</action>
+	</package>
+	<!-- 资产aciton -->
+	<package name="assets" namespace="/assets" extends="default">
+		<action name="*_*" class="{1}Action" method="{2}">
+			<result name="add_success">/assets/add_success.jsp</result>
+			<result name="add_fail">/assets/add_fail.jsp</result>
+			<result name="success">/assets/showAssets.jsp</result>
+			<result name="delete_success" type="chain">asset_show</result>
+			<result name="modify_success" >/assets/updateAssets.jsp</result>
+			<result name="save_success" type="chain">asset_show</result>	
+		</action>
+	</package>
+
+</struts>
